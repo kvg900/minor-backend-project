@@ -1,0 +1,19 @@
+{
+  "name": "kavya-gupta",
+  "version": "1.0.0",
+  "description": "a backend at chi aur code channel",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "Kavya Gupta",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
