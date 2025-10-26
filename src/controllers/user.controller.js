@@ -11,7 +11,7 @@ const registerUser = asyncHandler(async (req, res) => {
   // check for images,check for avatar
   // if images are available then send them to cloudinary
   //create user object- create entry in DB
-  // remove password and refresh token field from response
+  // remove password and refresh token field from responseld
   //check for user creation
   //return res
 
@@ -23,12 +23,16 @@ const registerUser = asyncHandler(async (req, res) => {
   // }
 
   //step 2: checking for emptiness
-  if ([fullname, email, username, password].some(() => field?.trim() === "")) {
-    throw new ApiError(400, "All fiels are compulsary");
+  if (
+    [fullname, email, username, password].some(
+      (field) => !field || String(field).trim() === ""
+    )
+  ) {
+    throw new ApiError(400, "All fields are compulsory");
   }
 
   //step 3: checking if user details already exist
-  const existedUser = User.findOne({
+  const existedUser = await User.findOne({
     $or: [{ username }, { email }],
   });
 
@@ -38,7 +42,19 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //step 4: check for images and avatar
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  // const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+  // console.log("Avatar path:", avatarLocalPath);
+  // console.log("Cover image path:", coverImageLocalPath);
+
+  let coverImageLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.coverImage) &&
+    req.files.coverImage.length > 0
+  ) {
+    coverImageLocalPath = req.files.coverImage[0].path;
+  }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar image is required");
@@ -68,7 +84,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //step 7: check for user creation
   if (!createdUser) {
-    throw new ApiError(500, "Something went wrong hil registering the user");
+    throw new ApiError(500, "Something went wrong while registering the user");
   }
 
   //step 8: returning response
